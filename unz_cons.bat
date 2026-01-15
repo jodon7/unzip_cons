@@ -8,7 +8,7 @@ echo Extracting all .tgz files (recursive)
 echo ======================================
 echo.
 
-REM Use PowerShell to reliably find every .tgz file
+REM 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
     "Get-ChildItem -Path '.' -Recurse -Filter '*.tgz' | ForEach-Object {" ^
     "  Write-Host 'Extracting' $_.FullName;" ^
