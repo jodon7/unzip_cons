@@ -4,14 +4,16 @@
 setlocal enabledelayedexpansion
 
 echo ======================================
-echo Extracting all .tgz files in %cd%
+echo Extracting all .tgz files (recursive)
 echo ======================================
 echo.
 
-for %%F in (*.tgz) do (
-    echo Processing %%F ...
-    tar -xvf "%%F"
-)
+REM Use PowerShell to reliably find every .tgz file
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
+    "Get-ChildItem -Path '.' -Recurse -Filter '*.tgz' | ForEach-Object {" ^
+    "  Write-Host 'Extracting' $_.FullName;" ^
+    "  & tar -xvf $_.FullName -C $_.DirectoryName;" ^
+    "}"
 
 echo.
 echo ======================================
@@ -25,7 +27,7 @@ if not exist "%destDir%" (
     mkdir "%destDir%"
 )
 
-REM Use PowerShell to find and copy CSV files recursively (depth 8)
+REM Collect CSV files recursively (depth 8)
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
     "$sourceDir = './';" ^
     "Get-ChildItem -Path $sourceDir -Recurse -Depth 8 -Filter '*.csv' | ForEach-Object { Copy-Item -Path $_.FullName -Destination '%destDir%' -Force };" ^
@@ -34,5 +36,4 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
 echo.
 echo Done!
 pause
-``
 
